@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+  ~
+  ~   WSO2 Inc. licenses this file to you under the Apache License,
+  ~   Version 2.0 (the "License"); you may not use this file except
+  ~   in compliance with the License.
+  ~   You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing,
+  ~  software distributed under the License is distributed on an
+  ~  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~  KIND, either express or implied.  See the License for the
+  ~  specific language governing permissions and limitations
+  ~  under the License.
+-->
+<template name="publishMessage" xmlns="http://ws.apache.org/ns/synapse">
+    <parameter name="projectId" description="Unique identifier of the project"/>
+    <parameter name="topicName" description="Name of the Topic"/>
+    <parameter name="data" description="The message payload."/>
+    <parameter name="attributes" description="Optional attributes for this message."/>
+    <sequence>
+        <property name="uri.var.googlepubsub.projectId" expression="$func:projectId"/>
+        <property name="uri.var.googlepubsub.topicName" expression="$func:topicName"/>
+        <property name="googlepubsub.data" expression="$func:data"/>
+        <property name="googlepubsub.attributes" expression="$func:attributes"/>
+        <payloadFactory media-type="json">
+            <format>
+                {
+                "messages":[{"data":"$1"}]
+                }
+            </format>
+            <args>
+                <arg expression="base64Encode($ctx:googlepubsub.data)"/>
+            </args>
+        </payloadFactory>
+        <script language="js">
+            <![CDATA[
+                var attributes = mc.getProperty('googlepubsub.attributes');
+                var payload = mc.getPayloadJSON();
+                if (attributes != null && attributes != "") {
+                    payload.messages[0].attributes = eval( "(" + attributes + ")" );
+                }
+                mc.setPayloadJSON(payload);
+            ]]>
+        </script>
+        <property name="Accept-Encoding" scope="transport" action="remove"/>
+        <filter source="$ctx:googlepubsub.blocking" regex="true">
+            <then>
+                <call blocking="true">
+                    <endpoint>
+                        <http method="post"
+                              uri-template="{uri.var.googlepubsub.apiUrl}/{uri.var.googlepubsub.apiVersion}/projects/{uri.var.googlepubsub.projectId}/topics/{uri.var.googlepubsub.topicName}:publish"/>
+                    </endpoint>
+                </call>
+            </then>
+            <else>
+                <call>
+                    <endpoint>
+                        <http method="post"
+                              uri-template="{uri.var.googlepubsub.apiUrl}/{uri.var.googlepubsub.apiVersion}/projects/{uri.var.googlepubsub.projectId}/topics/{uri.var.googlepubsub.topicName}:publish"/>
+                    </endpoint>
+                </call>
+            </else>
+        </filter>
+        <!-- Remove response custom header information -->
+        <header name="Cache-Control" scope="transport" action="remove"/>
+        <header name="Content-Encoding" scope="transport" action="remove"/>
+        <header name="Content-Length" scope="transport" action="remove"/>
+        <header name="Content-Type" scope="transport" action="remove"/>
+        <header name="Date" scope="transport" action="remove"/>
+        <header name="Server" scope="transport" action="remove"/>
+        <header name="Vary" scope="transport" action="remove"/>
+        <header name="Cache-Control" action="remove" scope="transport"/>
+        <header name="Pragma" action="remove" scope="transport"/>
+    </sequence>
+</template>

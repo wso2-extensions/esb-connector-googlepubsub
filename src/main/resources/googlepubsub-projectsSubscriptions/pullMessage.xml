@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+  ~
+  ~   WSO2 Inc. licenses this file to you under the Apache License,
+  ~   Version 2.0 (the "License"); you may not use this file except
+  ~   in compliance with the License.
+  ~   You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing,
+  ~  software distributed under the License is distributed on an
+  ~  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~  KIND, either express or implied.  See the License for the
+  ~  specific language governing permissions and limitations
+  ~  under the License.
+-->
+<template name="pullMessage" xmlns="http://ws.apache.org/ns/synapse">
+    <parameter name="projectId" description="Unique identifier of the project"/>
+    <parameter name="subscriptionName" description="Name of the Subscription"/>
+    <parameter name="maxMessages" description="The maximum number of messages returned for this request"/>
+    <parameter name="returnImmediately" description=" return the respond immediately or not"/>
+    <sequence>
+        <property name="uri.var.googlepubsub.projectId" expression="$func:projectId"/>
+        <property name="uri.var.googlepubsub.subscriptionName" expression="$func:subscriptionName"/>
+        <property name="googlepubsub.maxMessages" expression="$func:maxMessages"/>
+        <property name="googlepubsub.returnImmediately" expression="$func:returnImmediately"/>
+        <payloadFactory media-type="json">
+            <format>
+                {
+                "maxMessages": "$1"
+                }
+            </format>
+            <args>
+                <arg expression="$ctx:googlepubsub.maxMessages"/>
+            </args>
+        </payloadFactory>
+        <script language="js">
+            <![CDATA[
+                var returnImmediately = mc.getProperty('googlepubsub.returnImmediately');
+                var payload = mc.getPayloadJSON();
+                if (returnImmediately != null && returnImmediately != "") {
+                    payload.returnImmediately = returnImmediately;
+                }
+                mc.setPayloadJSON(payload);
+            ]]>
+        </script>
+        <property name="Accept-Encoding" scope="transport" action="remove"/>
+        <filter source="$ctx:googlepubsub.blocking" regex="true">
+            <then>
+                <call blocking="true">
+                    <endpoint>
+                        <http method="post"
+                              uri-template="{uri.var.googlepubsub.apiUrl}/{uri.var.googlepubsub.apiVersion}/projects/{uri.var.googlepubsub.projectId}/subscriptions/{uri.var.googlepubsub.subscriptionName}:pull"/>
+                    </endpoint>
+                </call>
+            </then>
+            <else>
+                <call>
+                    <endpoint>
+                        <http method="post"
+                              uri-template="{uri.var.googlepubsub.apiUrl}/{uri.var.googlepubsub.apiVersion}/projects/{uri.var.googlepubsub.projectId}/subscriptions/{uri.var.googlepubsub.subscriptionName}:pull"/>
+                    </endpoint>
+                </call>
+            </else>
+        </filter>
+        <!-- Remove response custom header information -->
+        <header name="Cache-Control" scope="transport" action="remove"/>
+        <header name="Content-Encoding" scope="transport" action="remove"/>
+        <header name="Content-Length" scope="transport" action="remove"/>
+        <header name="Content-Type" scope="transport" action="remove"/>
+        <header name="Date" scope="transport" action="remove"/>
+        <header name="Server" scope="transport" action="remove"/>
+        <header name="Vary" scope="transport" action="remove"/>
+    </sequence>
+</template>

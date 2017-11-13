@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+  ~
+  ~ WSO2 Inc. licenses this file to you under the Apache License,
+  ~ Version 2.0 (the "License"); you may not use this file except
+  ~ in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~    http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+-->
+<template name="init" xmlns="http://ws.apache.org/ns/synapse">
+    <parameter name="accessToken" description="Access Token if a client account is being used"/>
+    <parameter name="apiUrl" description="API Url to access the endpoint."/>
+    <parameter name="apiVersion" description="API Version."/>
+    <parameter name="clientId"
+               description="clientId of your App, given by google console when you registered your application"/>
+    <parameter name="clientSecret"
+               description="clientSecret of your App, given by google console when you registered your application"/>
+    <parameter name="refreshToken" description="Refresh token to exchange with an access token."/>
+    <parameter name="blocking" description="Set to true to perform the blocking invocations to Google Spreadsheet."/>
+    <parameter name="accessTokenRegistryPath"
+               description="Registry Path of the Connector where the values are stored."/>
+    <sequence>
+        <property name="uri.var.googlepubsub.apiUrl" expression="$func:apiUrl"/>
+        <property name="uri.var.googlepubsub.apiVersion" expression="$func:apiVersion"/>
+        <property name="uri.var.googlepubsub.accessToken" expression="$func:accessToken"/>
+        <property name="googlepubsub.refreshToken" expression="$func:refreshToken"/>
+        <property name="googlepubsub.clientId" expression="$func:clientId"/>
+        <property name="googlepubsub.clientSecret" expression="$func:clientSecret"/>
+        <property name="googlepubsub.blocking" expression="$func:blocking"/>
+        <property name="uri.var.googlepubsub.accessTokenRegistryPath"
+                  expression="$func:accessTokenRegistryPath"/>
+        <filter source="boolean($ctx:googlepubsub.refreshToken) and boolean($ctx:googlepubsub.clientSecret)
+                and boolean($ctx:googlepubsub.clientId) and boolean($ctx:uri.var.googlepubsub.accessToken)"
+                regex="true">
+            <then>
+                <filter source="boolean($ctx:uri.var.googlepubsub.accessTokenRegistryPath)" regex="false">
+                    <then>
+                        <property name="uri.var.googlepubsub.accessTokenRegistryPath"
+                                  value="connectors/googlepubsub/accessToken"/>
+                    </then>
+                    <else>
+                        <property name="uri.var.googlepubsub.accessTokenRegistryPath"
+                                  expression="$ctx:uri.var.googlepubsub.accessTokenRegistryPath"/>
+                    </else>
+                </filter>
+                <property name="googlepubsub.accessToken.reg"
+                          expression="get-property('registry', $ctx:uri.var.googlepubsub.accessTokenRegistryPath)"/>
+                <filter source="$ctx:googlepubsub.accessToken.reg=''" regex="true">
+                    <then>
+                        <script language="js">
+                            <![CDATA[
+                           importPackage(Packages.org.apache.synapse.config);
+                           var newAccess = mc.getProperty('uri.var.googlepubsub.accessToken');
+                           var newAccessRegistryPath = mc.getProperty('uri.var.googlepubsub.accessTokenRegistryPath');
+                           if(newAccess != null && newAccess != ''){
+                               //Create the registry entry if no such entry exists.
+                               mc.getConfiguration().getRegistry().newResource(newAccessRegistryPath,false);
+                               mc.getConfiguration().getRegistry().updateResource(newAccessRegistryPath,newAccess);
+                           }
+                           ]]>
+                        </script>
+                    </then>
+                    <else>
+                        <property name="uri.var.googlepubsub.accessToken"
+                                  expression="$ctx:googlepubsub.accessToken.reg"/>
+                    </else>
+                </filter>
+                <call>
+                    <endpoint>
+                        <http method="get"
+                              uri-template="https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={+uri.var.googlepubsub.accessToken}"/>
+                    </endpoint>
+                </call>
+                <property name="googlepubsub.error" expression="json-eval($.error)"/>
+                <filter source="$ctx:googlepubsub.error='invalid_token'"
+                        regex="true">
+                    <googlepubsub.getAccessTokenFromRefreshToken/>
+                    <property name="uri.var.googlepubsub.accessToken"
+                              expression="json-eval($.access_token)"/>
+                </filter>
+            </then>
+        </filter>
+        <header name="Authorization" expression="fn:concat('Bearer ', $ctx:uri.var.googlepubsub.accessToken)"
+                scope="transport"/>
+    </sequence>
+</template>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+  ~
+  ~   WSO2 Inc. licenses this file to you under the Apache License,
+  ~   Version 2.0 (the "License"); you may not use this file except
+  ~   in compliance with the License.
+  ~   You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing,
+  ~  software distributed under the License is distributed on an
+  ~  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~  KIND, either express or implied.  See the License for the
+  ~  specific language governing permissions and limitations
+  ~  under the License.
+-->
+<template name="createTopic" xmlns="http://ws.apache.org/ns/synapse">
+    <parameter name="projectId" description="Unique identifier of the project"/>
+    <parameter name="topicName" description="Name of the Topic"/>
+    <sequence>
+        <property name="uri.var.googlepubsub.projectId" expression="$func:projectId"/>
+        <property name="uri.var.googlepubsub.topicName" expression="$func:topicName"/>
+        <payloadFactory media-type="json">
+            <format>
+                {}
+            </format>
+        </payloadFactory>
+        <property name="Accept-Encoding" scope="transport" action="remove"/>
+        <filter source="$ctx:googlepubsub.blocking" regex="true">
+            <then>
+                <call blocking="true">
+                    <endpoint>
+                        <http method="put"
+                              uri-template="{uri.var.googlepubsub.apiUrl}/{uri.var.googlepubsub.apiVersion}/projects/{uri.var.googlepubsub.projectId}/topics/{uri.var.googlepubsub.topicName}"/>
+                    </endpoint>
+                </call>
+            </then>
+            <else>
+                <call>
+                    <endpoint>
+                        <http method="put"
+                              uri-template="{uri.var.googlepubsub.apiUrl}/{uri.var.googlepubsub.apiVersion}/projects/{uri.var.googlepubsub.projectId}/topics/{uri.var.googlepubsub.topicName}"/>
+                    </endpoint>
+                </call>
+            </else>
+        </filter>
+        <!-- Remove response custom header information -->
+        <header name="Cache-Control" scope="transport" action="remove"/>
+        <header name="Content-Encoding" scope="transport" action="remove"/>
+        <header name="Content-Length" scope="transport" action="remove"/>
+        <header name="Content-Type" scope="transport" action="remove"/>
+        <header name="Date" scope="transport" action="remove"/>
+        <header name="Server" scope="transport" action="remove"/>
+        <header name="Vary" scope="transport" action="remove"/>
+        <header name="Cache-Control" action="remove" scope="transport"/>
+        <header name="Pragma" action="remove" scope="transport"/>
+    </sequence>
+</template>

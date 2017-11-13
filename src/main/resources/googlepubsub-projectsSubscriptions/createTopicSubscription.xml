@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+  ~
+  ~   WSO2 Inc. licenses this file to you under the Apache License,
+  ~   Version 2.0 (the "License"); you may not use this file except
+  ~   in compliance with the License.
+  ~   You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing,
+  ~  software distributed under the License is distributed on an
+  ~  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~  KIND, either express or implied.  See the License for the
+  ~  specific language governing permissions and limitations
+  ~  under the License.
+-->
+<template name="createTopicSubscription" xmlns="http://ws.apache.org/ns/synapse">
+    <parameter name="projectId" description="Unique identifier of the project"/>
+    <parameter name="subscriptionName" description="Name of the Subscription"/>
+    <parameter name="topicName" description="The name of the topic from which this subscription is receiving messages"/>
+    <parameter name="ackDeadlineSeconds"
+               description="Maximum time after a subscriber receives a message before subscriber should acknowledge the message"/>
+    <parameter name="pushEndpoint" description="A URL locating the endpoint to which messages should be pushed"/>
+    <parameter name="attributes" description="Endpoint configuration attributes"/>
+    <sequence>
+        <property name="uri.var.googlepubsub.projectId" expression="$func:projectId"/>
+        <property name="uri.var.googlepubsub.subscriptionName" expression="$func:subscriptionName"/>
+        <property name="googlepubsub.topicName" expression="$func:topicName"/>
+        <property name="googlepubsub.ackDeadlineSeconds" expression="$func:ackDeadlineSeconds"/>
+        <property name="googlepubsub.pushEndpoint" expression="$func:pushEndpoint"/>
+        <property name="googlepubsub.attributes" expression="$func:attributes"/>
+        <payloadFactory media-type="json">
+            <format>
+                {
+                "topic": "$1"
+                }
+            </format>
+            <args>
+                <arg expression="fn:concat('projects/',$ctx:uri.var.googlepubsub.projectId,'/topics/',$ctx:googlepubsub.topicName)"/>
+            </args>
+        </payloadFactory>
+        <script language="js">
+            <![CDATA[
+                var ackDeadlineSeconds = mc.getProperty('googlepubsub.ackDeadlineSeconds');
+                var pushEndpoint = mc.getProperty('googlepubsub.pushEndpoint');
+                var attributes = mc.getProperty('googlepubsub.attributes');
+                var payload = mc.getPayloadJSON();
+                if (ackDeadlineSeconds != null && ackDeadlineSeconds != "") {
+                    payload.ackDeadlineSeconds = ackDeadlineSeconds;
+                }
+                if (pushEndpoint != null && pushEndpoint != "") {
+                    payload.pushConfig={};
+                    payload.pushConfig.pushEndpoint=pushEndpoint;
+                    if (attributes != null && attributes != "") {
+                        payload.pushConfig.attributes = attributes;
+                    }
+                }
+                mc.setPayloadJSON(payload);
+            ]]>
+        </script>
+        <property name="Accept-Encoding" scope="transport" action="remove"/>
+        <filter source="$ctx:googlepubsub.blocking" regex="true">
+            <then>
+                <call blocking="true">
+                    <endpoint>
+                        <http method="put"
+                              uri-template="{uri.var.googlepubsub.apiUrl}/{uri.var.googlepubsub.apiVersion}/projects/{uri.var.googlepubsub.projectId}/subscriptions/{uri.var.googlepubsub.subscriptionName}"/>
+                    </endpoint>
+                </call>
+            </then>
+            <else>
+                <call>
+                    <endpoint>
+                        <http method="put"
+                              uri-template="{uri.var.googlepubsub.apiUrl}/{uri.var.googlepubsub.apiVersion}/projects/{uri.var.googlepubsub.projectId}/subscriptions/{uri.var.googlepubsub.subscriptionName}"/>
+                    </endpoint>
+                </call>
+            </else>
+        </filter>
+        <!-- Remove response custom header information -->
+        <header name="Cache-Control" scope="transport" action="remove"/>
+        <header name="Content-Encoding" scope="transport" action="remove"/>
+        <header name="Content-Length" scope="transport" action="remove"/>
+        <header name="Content-Type" scope="transport" action="remove"/>
+        <header name="Date" scope="transport" action="remove"/>
+        <header name="Server" scope="transport" action="remove"/>
+        <header name="Vary" scope="transport" action="remove"/>
+    </sequence>
+</template>
