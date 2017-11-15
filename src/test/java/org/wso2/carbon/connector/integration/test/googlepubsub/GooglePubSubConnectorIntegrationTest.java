@@ -18,7 +18,6 @@ package org.wso2.carbon.connector.integration.test.googlepubsub;
  * under the License.
  */
 
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -26,7 +25,6 @@ import org.testng.annotations.Test;
 import org.wso2.connector.integration.test.base.ConnectorIntegrationTestBase;
 import org.wso2.connector.integration.test.base.RestResponse;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,7 +57,7 @@ public class GooglePubSubConnectorIntegrationTest extends ConnectorIntegrationTe
     /**
      * Positive test case for createTopic method with mandatory parameters.
      */
-    @Test(groups = { "wso2.esb" },
+    @Test(groups = { "wso2.ei" },
           description = "googlePubSub {createTopic} integration test with mandatory parameters.")
     public void testCreateTopicWithMandatoryParameters() throws Exception {
         esbRequestHeadersMap.put("Action", "urn:createTopic");
@@ -74,7 +72,7 @@ public class GooglePubSubConnectorIntegrationTest extends ConnectorIntegrationTe
     /**
      * Positive test case for createTopic method with Negative parameters.
      */
-    @Test(groups = { "wso2.esb" },
+    @Test(groups = { "wso2.ei" },
           dependsOnMethods = { "testCreateTopicWithMandatoryParameters" },
           description = "googlePubSub {createTopic} integration test with Negative parameters.")
     public void testCreateTopicWithNegativeParameters() throws Exception {
@@ -95,7 +93,7 @@ public class GooglePubSubConnectorIntegrationTest extends ConnectorIntegrationTe
     /**
      * Positive test case for createTopicSubscription method with mandatory parameters.
      */
-    @Test(groups = { "wso2.esb" },
+    @Test(groups = { "wso2.ei" },
           dependsOnMethods = { "testCreateTopicWithNegativeParameters" },
           description = "googlePubSub {createTopicSubscription} integration test with mandatory parameters.")
     public void testCreateTopicSubscriptionWithMandatoryParameters() throws Exception {
@@ -115,7 +113,7 @@ public class GooglePubSubConnectorIntegrationTest extends ConnectorIntegrationTe
     /**
      * Positive test case for createTopicSubscription method with optional parameters.
      */
-    @Test(groups = { "wso2.esb" },
+    @Test(groups = { "wso2.ei" },
           dependsOnMethods = { "testCreateTopicWithNegativeParameters" },
           description = "googlePubSub {createTopicSubscription} integration test with optional parameters.")
     public void testCreateTopicSubscriptionWithOptionalParameters() throws Exception {
@@ -137,7 +135,7 @@ public class GooglePubSubConnectorIntegrationTest extends ConnectorIntegrationTe
     /**
      * Positive test case for createTopicSubscription method with Negative parameters.
      */
-    @Test(groups = { "wso2.esb" },
+    @Test(groups = { "wso2.ei" },
           description = "googlePubSub {createTopicSubscription} integration test with Negative parameters.")
     public void testCreateTopicSubscriptionWithNegativeParameters() throws Exception {
         esbRequestHeadersMap.put("Action", "urn:createTopicSubscription");
@@ -150,7 +148,7 @@ public class GooglePubSubConnectorIntegrationTest extends ConnectorIntegrationTe
     /**
      * Positive test case for publishMessage method with mandatory parameters.
      */
-    @Test(groups = { "wso2.esb" },
+    @Test(groups = { "wso2.ei" },
           dependsOnMethods = { "testCreateTopicWithNegativeParameters" },
           description = "googlePubSub {publishMessage} integration test with mandatory parameters.")
     public void testPublishMessageWithMandatoryParameters() throws Exception {
@@ -166,7 +164,7 @@ public class GooglePubSubConnectorIntegrationTest extends ConnectorIntegrationTe
     /**
      * Positive test case for publishMessage method with optional parameters.
      */
-    @Test(groups = { "wso2.esb" },
+    @Test(groups = { "wso2.ei" },
           dependsOnMethods = { "testCreateTopicWithNegativeParameters" },
           description = "googlePubSub {publishMessage} integration test with optional parameters.")
     public void testpublishMessageWithOptionalParameters() throws Exception {
@@ -180,7 +178,7 @@ public class GooglePubSubConnectorIntegrationTest extends ConnectorIntegrationTe
     /**
      * Positive test case for publishMessage method with negative parameters.
      */
-    @Test(groups = { "wso2.esb" },
+    @Test(groups = { "wso2.ei" },
           dependsOnMethods = { "testCreateTopicWithNegativeParameters" },
           description = "googlePubSub {publishMessage} integration test with negative parameters.")
     public void testPublishMessageWithNegativeParameters() throws Exception {
@@ -194,7 +192,7 @@ public class GooglePubSubConnectorIntegrationTest extends ConnectorIntegrationTe
     /**
      * Positive test case for publishMessage method with mandatory parameters.
      */
-    @Test(groups = { "wso2.esb" },
+    @Test(groups = { "wso2.ei" },
           dependsOnMethods = {
                   "testPublishMessageWithMandatoryParameters", "testCreateTopicSubscriptionWithMandatoryParameters"
           },
@@ -213,7 +211,7 @@ public class GooglePubSubConnectorIntegrationTest extends ConnectorIntegrationTe
     /**
      * Positive test case for publishMessage method with negative parameters.
      */
-    @Test(groups = { "wso2.esb" },
+    @Test(groups = { "wso2.ei" },
           description = "googlePubSub {publishMessage} integration test with negative parameters.")
     public void testPullMessageWithNegativeParameters() throws Exception {
         esbRequestHeadersMap.put("Action", "urn:pullMessage");

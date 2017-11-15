@@ -29,38 +29,38 @@
     <parameter name="accessTokenRegistryPath"
                description="Registry Path of the Connector where the values are stored."/>
     <sequence>
-        <property name="uri.var.googlepubsub.apiUrl" expression="$func:apiUrl"/>
-        <property name="uri.var.googlepubsub.apiVersion" expression="$func:apiVersion"/>
-        <property name="uri.var.googlepubsub.accessToken" expression="$func:accessToken"/>
-        <property name="googlepubsub.refreshToken" expression="$func:refreshToken"/>
-        <property name="googlepubsub.clientId" expression="$func:clientId"/>
-        <property name="googlepubsub.clientSecret" expression="$func:clientSecret"/>
-        <property name="googlepubsub.blocking" expression="$func:blocking"/>
-        <property name="uri.var.googlepubsub.accessTokenRegistryPath"
+        <property name="uri.var.pubSubApiUrl" expression="$func:apiUrl"/>
+        <property name="uri.var.pubSubApiVersion" expression="$func:apiVersion"/>
+        <property name="uri.var.pubSubAccessToken" expression="$func:accessToken"/>
+        <property name="pubSubRefreshToken" expression="$func:refreshToken"/>
+        <property name="pubSubClientId" expression="$func:clientId"/>
+        <property name="pubSubClientSecret" expression="$func:clientSecret"/>
+        <property name="pubSubBlocking" expression="$func:blocking"/>
+        <property name="uri.var.pubSubAccessTokenRegistryPath"
                   expression="$func:accessTokenRegistryPath"/>
-        <filter source="boolean($ctx:googlepubsub.refreshToken) and boolean($ctx:googlepubsub.clientSecret)
-                and boolean($ctx:googlepubsub.clientId) and boolean($ctx:uri.var.googlepubsub.accessToken)"
+        <filter source="boolean($ctx:pubSubRefreshToken) and boolean($ctx:pubSubClientSecret)
+                and boolean($ctx:pubSubClientId) and boolean($ctx:uri.var.pubSubAccessToken)"
                 regex="true">
             <then>
-                <filter source="boolean($ctx:uri.var.googlepubsub.accessTokenRegistryPath)" regex="false">
+                <filter source="boolean($ctx:uri.var.pubSubAccessTokenRegistryPath)" regex="false">
                     <then>
-                        <property name="uri.var.googlepubsub.accessTokenRegistryPath"
-                                  value="connectors/googlepubsub/accessToken"/>
+                        <property name="uri.var.pubSubAccessTokenRegistryPath"
+                                  value="connectors/pubSub/accessToken"/>
                     </then>
                     <else>
-                        <property name="uri.var.googlepubsub.accessTokenRegistryPath"
-                                  expression="$ctx:uri.var.googlepubsub.accessTokenRegistryPath"/>
+                        <property name="uri.var.pubSubAccessTokenRegistryPath"
+                                  expression="$ctx:uri.var.pubSubAccessTokenRegistryPath"/>
                     </else>
                 </filter>
-                <property name="googlepubsub.accessToken.reg"
-                          expression="get-property('registry', $ctx:uri.var.googlepubsub.accessTokenRegistryPath)"/>
-                <filter source="$ctx:googlepubsub.accessToken.reg=''" regex="true">
+                <property name="pubSubAccessTokenReg"
+                          expression="get-property('registry', $ctx:uri.var.pubSubAccessTokenRegistryPath)"/>
+                <filter source="$ctx:pubSubAccessTokenReg=''" regex="true">
                     <then>
                         <script language="js">
                             <![CDATA[
                            importPackage(Packages.org.apache.synapse.config);
-                           var newAccess = mc.getProperty('uri.var.googlepubsub.accessToken');
-                           var newAccessRegistryPath = mc.getProperty('uri.var.googlepubsub.accessTokenRegistryPath');
+                           var newAccess = mc.getProperty('uri.var.pubSubAccessToken');
+                           var newAccessRegistryPath = mc.getProperty('uri.var.pubSubAccessTokenRegistryPath');
                            if(newAccess != null && newAccess != ''){
                                //Create the registry entry if no such entry exists.
                                mc.getConfiguration().getRegistry().newResource(newAccessRegistryPath,false);
@@ -70,26 +70,26 @@
                         </script>
                     </then>
                     <else>
-                        <property name="uri.var.googlepubsub.accessToken"
-                                  expression="$ctx:googlepubsub.accessToken.reg"/>
+                        <property name="uri.var.pubsubAccessToken"
+                                  expression="$ctx:pubSubAccessTokenReg"/>
                     </else>
                 </filter>
                 <call>
                     <endpoint>
                         <http method="get"
-                              uri-template="https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={+uri.var.googlepubsub.accessToken}"/>
+                              uri-template="https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={+uri.var.pubSubAccessToken}"/>
                     </endpoint>
                 </call>
-                <property name="googlepubsub.error" expression="json-eval($.error)"/>
-                <filter source="$ctx:googlepubsub.error='invalid_token'"
+                <property name="pubSubError" expression="json-eval($.error)"/>
+                <filter source="$ctx:pubSubError='invalid_token'"
                         regex="true">
                     <googlepubsub.getAccessTokenFromRefreshToken/>
-                    <property name="uri.var.googlepubsub.accessToken"
+                    <property name="uri.var.pubSubAccessToken"
                               expression="json-eval($.access_token)"/>
                 </filter>
             </then>
         </filter>
-        <header name="Authorization" expression="fn:concat('Bearer ', $ctx:uri.var.googlepubsub.accessToken)"
+        <header name="Authorization" expression="fn:concat('Bearer ', $ctx:uri.var.pubSubAccessToken)"
                 scope="transport"/>
     </sequence>
 </template>

@@ -25,12 +25,12 @@
     <parameter name="pushEndpoint" description="A URL locating the endpoint to which messages should be pushed"/>
     <parameter name="attributes" description="Endpoint configuration attributes"/>
     <sequence>
-        <property name="uri.var.googlepubsub.projectId" expression="$func:projectId"/>
-        <property name="uri.var.googlepubsub.subscriptionName" expression="$func:subscriptionName"/>
-        <property name="googlepubsub.topicName" expression="$func:topicName"/>
-        <property name="googlepubsub.ackDeadlineSeconds" expression="$func:ackDeadlineSeconds"/>
-        <property name="googlepubsub.pushEndpoint" expression="$func:pushEndpoint"/>
-        <property name="googlepubsub.attributes" expression="$func:attributes"/>
+        <property name="uri.var.pubSubProjectId" expression="$func:projectId"/>
+        <property name="uri.var.pubSubSubscriptionName" expression="$func:subscriptionName"/>
+        <property name="pubSubTopicName" expression="$func:topicName"/>
+        <property name="pubSubAckDeadlineSeconds" expression="$func:ackDeadlineSeconds"/>
+        <property name="pubSubPushEndpoint" expression="$func:pushEndpoint"/>
+        <property name="pubSubAttributes" expression="$func:attributes"/>
         <payloadFactory media-type="json">
             <format>
                 {
@@ -38,14 +38,14 @@
                 }
             </format>
             <args>
-                <arg expression="fn:concat('projects/',$ctx:uri.var.googlepubsub.projectId,'/topics/',$ctx:googlepubsub.topicName)"/>
+                <arg expression="fn:concat('projects/',$ctx:uri.var.pubSubProjectId,'/topics/',$ctx:pubSubTopicName)"/>
             </args>
         </payloadFactory>
         <script language="js">
             <![CDATA[
-                var ackDeadlineSeconds = mc.getProperty('googlepubsub.ackDeadlineSeconds');
-                var pushEndpoint = mc.getProperty('googlepubsub.pushEndpoint');
-                var attributes = mc.getProperty('googlepubsub.attributes');
+                var ackDeadlineSeconds = mc.getProperty('pubSubAckDeadlineSeconds');
+                var pushEndpoint = mc.getProperty('pubSubPushEndpoint');
+                var attributes = mc.getProperty('pubSubAttributes');
                 var payload = mc.getPayloadJSON();
                 if (ackDeadlineSeconds != null && ackDeadlineSeconds != "") {
                     payload.ackDeadlineSeconds = ackDeadlineSeconds;
@@ -61,12 +61,12 @@
             ]]>
         </script>
         <property name="Accept-Encoding" scope="transport" action="remove"/>
-        <filter source="$ctx:googlepubsub.blocking" regex="true">
+        <filter source="$ctx:pubSubBlocking" regex="true">
             <then>
                 <call blocking="true">
                     <endpoint>
                         <http method="put"
-                              uri-template="{uri.var.googlepubsub.apiUrl}/{uri.var.googlepubsub.apiVersion}/projects/{uri.var.googlepubsub.projectId}/subscriptions/{uri.var.googlepubsub.subscriptionName}"/>
+                              uri-template="{uri.var.pubSubApiUrl}/{uri.var.pubSubApiVersion}/projects/{uri.var.pubSubProjectId}/subscriptions/{uri.var.pubSubSubscriptionName}"/>
                     </endpoint>
                 </call>
             </then>
@@ -74,18 +74,10 @@
                 <call>
                     <endpoint>
                         <http method="put"
-                              uri-template="{uri.var.googlepubsub.apiUrl}/{uri.var.googlepubsub.apiVersion}/projects/{uri.var.googlepubsub.projectId}/subscriptions/{uri.var.googlepubsub.subscriptionName}"/>
+                              uri-template="{uri.var.pubSubApiUrl}/{uri.var.pubSubApiVersion}/projects/{uri.var.pubSubProjectId}/subscriptions/{uri.var.pubSubSubscriptionName}"/>
                     </endpoint>
                 </call>
             </else>
         </filter>
-        <!-- Remove response custom header information -->
-        <header name="Cache-Control" scope="transport" action="remove"/>
-        <header name="Content-Encoding" scope="transport" action="remove"/>
-        <header name="Content-Length" scope="transport" action="remove"/>
-        <header name="Content-Type" scope="transport" action="remove"/>
-        <header name="Date" scope="transport" action="remove"/>
-        <header name="Server" scope="transport" action="remove"/>
-        <header name="Vary" scope="transport" action="remove"/>
     </sequence>
 </template>

@@ -22,10 +22,10 @@
     <parameter name="data" description="The message payload."/>
     <parameter name="attributes" description="Optional attributes for this message."/>
     <sequence>
-        <property name="uri.var.googlepubsub.projectId" expression="$func:projectId"/>
-        <property name="uri.var.googlepubsub.topicName" expression="$func:topicName"/>
-        <property name="googlepubsub.data" expression="$func:data"/>
-        <property name="googlepubsub.attributes" expression="$func:attributes"/>
+        <property name="uri.var.pubSubProjectId" expression="$func:projectId"/>
+        <property name="uri.var.pubSubTopicName" expression="$func:topicName"/>
+        <property name="pubSubData" expression="$func:data"/>
+        <property name="pubSubAttributes" expression="$func:attributes"/>
         <payloadFactory media-type="json">
             <format>
                 {
@@ -33,12 +33,12 @@
                 }
             </format>
             <args>
-                <arg expression="base64Encode($ctx:googlepubsub.data)"/>
+                <arg expression="base64Encode($ctx:pubSubData)"/>
             </args>
         </payloadFactory>
         <script language="js">
             <![CDATA[
-                var attributes = mc.getProperty('googlepubsub.attributes');
+                var attributes = mc.getProperty('pubSubAttributes');
                 var payload = mc.getPayloadJSON();
                 if (attributes != null && attributes != "") {
                     payload.messages[0].attributes = eval( "(" + attributes + ")" );
@@ -47,12 +47,12 @@
             ]]>
         </script>
         <property name="Accept-Encoding" scope="transport" action="remove"/>
-        <filter source="$ctx:googlepubsub.blocking" regex="true">
+        <filter source="$ctx:pubSubBlocking" regex="true">
             <then>
                 <call blocking="true">
                     <endpoint>
                         <http method="post"
-                              uri-template="{uri.var.googlepubsub.apiUrl}/{uri.var.googlepubsub.apiVersion}/projects/{uri.var.googlepubsub.projectId}/topics/{uri.var.googlepubsub.topicName}:publish"/>
+                              uri-template="{uri.var.pubSubApiUrl}/{uri.var.pubSubApiVersion}/projects/{uri.var.pubSubProjectId}/topics/{uri.var.pubSubTopicName}:publish"/>
                     </endpoint>
                 </call>
             </then>
@@ -60,20 +60,10 @@
                 <call>
                     <endpoint>
                         <http method="post"
-                              uri-template="{uri.var.googlepubsub.apiUrl}/{uri.var.googlepubsub.apiVersion}/projects/{uri.var.googlepubsub.projectId}/topics/{uri.var.googlepubsub.topicName}:publish"/>
+                              uri-template="{uri.var.pubSubApiUrl}/{uri.var.pubSubApiVersion}/projects/{uri.var.pubSubProjectId}/topics/{uri.var.pubSubTopicName}:publish"/>
                     </endpoint>
                 </call>
             </else>
         </filter>
-        <!-- Remove response custom header information -->
-        <header name="Cache-Control" scope="transport" action="remove"/>
-        <header name="Content-Encoding" scope="transport" action="remove"/>
-        <header name="Content-Length" scope="transport" action="remove"/>
-        <header name="Content-Type" scope="transport" action="remove"/>
-        <header name="Date" scope="transport" action="remove"/>
-        <header name="Server" scope="transport" action="remove"/>
-        <header name="Vary" scope="transport" action="remove"/>
-        <header name="Cache-Control" action="remove" scope="transport"/>
-        <header name="Pragma" action="remove" scope="transport"/>
     </sequence>
 </template>

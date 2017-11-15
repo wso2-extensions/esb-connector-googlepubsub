@@ -22,10 +22,10 @@
     <parameter name="maxMessages" description="The maximum number of messages returned for this request"/>
     <parameter name="returnImmediately" description=" return the respond immediately or not"/>
     <sequence>
-        <property name="uri.var.googlepubsub.projectId" expression="$func:projectId"/>
-        <property name="uri.var.googlepubsub.subscriptionName" expression="$func:subscriptionName"/>
-        <property name="googlepubsub.maxMessages" expression="$func:maxMessages"/>
-        <property name="googlepubsub.returnImmediately" expression="$func:returnImmediately"/>
+        <property name="uri.var.pubSubProjectId" expression="$func:projectId"/>
+        <property name="uri.var.pubSubSubscriptionName" expression="$func:subscriptionName"/>
+        <property name="pubSubMaxMessages" expression="$func:maxMessages"/>
+        <property name="pubSubReturnImmediately" expression="$func:returnImmediately"/>
         <payloadFactory media-type="json">
             <format>
                 {
@@ -33,12 +33,12 @@
                 }
             </format>
             <args>
-                <arg expression="$ctx:googlepubsub.maxMessages"/>
+                <arg expression="$ctx:pubSubMaxMessages"/>
             </args>
         </payloadFactory>
         <script language="js">
             <![CDATA[
-                var returnImmediately = mc.getProperty('googlepubsub.returnImmediately');
+                var returnImmediately = mc.getProperty('pubSubReturnImmediately');
                 var payload = mc.getPayloadJSON();
                 if (returnImmediately != null && returnImmediately != "") {
                     payload.returnImmediately = returnImmediately;
@@ -47,12 +47,12 @@
             ]]>
         </script>
         <property name="Accept-Encoding" scope="transport" action="remove"/>
-        <filter source="$ctx:googlepubsub.blocking" regex="true">
+        <filter source="$ctx:pubSubBlocking" regex="true">
             <then>
                 <call blocking="true">
                     <endpoint>
                         <http method="post"
-                              uri-template="{uri.var.googlepubsub.apiUrl}/{uri.var.googlepubsub.apiVersion}/projects/{uri.var.googlepubsub.projectId}/subscriptions/{uri.var.googlepubsub.subscriptionName}:pull"/>
+                              uri-template="{uri.var.pubSubApiUrl}/{uri.var.pubSubApiVersion}/projects/{uri.var.pubSubProjectId}/subscriptions/{uri.var.pubSubSubscriptionName}:pull"/>
                     </endpoint>
                 </call>
             </then>
@@ -60,18 +60,10 @@
                 <call>
                     <endpoint>
                         <http method="post"
-                              uri-template="{uri.var.googlepubsub.apiUrl}/{uri.var.googlepubsub.apiVersion}/projects/{uri.var.googlepubsub.projectId}/subscriptions/{uri.var.googlepubsub.subscriptionName}:pull"/>
+                              uri-template="{uri.var.pubSubApiUrl}/{uri.var.pubSubApiVersion}/projects/{uri.var.pubSubProjectId}/subscriptions/{uri.var.pubSubSubscriptionName}:pull"/>
                     </endpoint>
                 </call>
             </else>
         </filter>
-        <!-- Remove response custom header information -->
-        <header name="Cache-Control" scope="transport" action="remove"/>
-        <header name="Content-Encoding" scope="transport" action="remove"/>
-        <header name="Content-Length" scope="transport" action="remove"/>
-        <header name="Content-Type" scope="transport" action="remove"/>
-        <header name="Date" scope="transport" action="remove"/>
-        <header name="Server" scope="transport" action="remove"/>
-        <header name="Vary" scope="transport" action="remove"/>
     </sequence>
 </template>

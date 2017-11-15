@@ -18,9 +18,9 @@
 -->
 <connector>
     <component name="googlepubsub" package="org.wso2.carbon.connector">
-        <dependency component="googlepubsub-config"/>
-        <dependency component="googlepubsub-projectsSubscriptions"/>
-        <dependency component="googlepubsub-projectsTopics"/>
+        <dependency component="config"/>
+        <dependency component="projectsSubscriptions"/>
+        <dependency component="projectsTopics"/>
         <description>google Pub/Sub v1 connector</description>
     </component>
 </connector>

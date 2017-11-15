@@ -23,9 +23,9 @@
                description="clientSecret of your App, given by google console when you registered your application"/>
     <parameter name="refreshToken" description="Refresh token to exchange with an access token."/>
     <sequence>
-        <property name="googlepubsub.refreshToken" expression="$func:refreshToken"/>
-        <property name="googlepubsub.clientId" expression="$func:clientId"/>
-        <property name="googlepubsub.clientSecret" expression="$func:clientSecret"/>
+        <property name="pubSubRefreshToken" expression="$func:refreshToken"/>
+        <property name="pubSubClientId" expression="$func:clientId"/>
+        <property name="pubSubClientSecret" expression="$func:clientSecret"/>
         <payloadFactory media-type="json">
             <format>
                 {
@@ -36,9 +36,9 @@
                 }
             </format>
             <args>
-                <arg expression="$ctx:googlepubsub.refreshToken"/>
-                <arg expression="$ctx:googlepubsub.clientSecret"/>
-                <arg expression="$ctx:googlepubsub.clientId"/>
+                <arg expression="$ctx:pubSubRefreshToken"/>
+                <arg expression="$ctx:pubSubClientSecret"/>
+                <arg expression="$ctx:pubSubClientId"/>
             </args>
         </payloadFactory>
         <property name="messageType" value="application/x-www-form-urlencoded" scope="axis2"/>
@@ -49,13 +49,13 @@
             </endpoint>
         </call>
         <!-- Setting the new access token to the property. -->
-        <property name="uri.var.googlepubsub.accessToken" expression="json-eval($.access_token)"/>
+        <property name="uri.var.pubSubAccessToken" expression="json-eval($.access_token)"/>
         <script language="js">
             <![CDATA[
             importPackage(Packages.org.apache.synapse.config);
-            var newAccessToken = mc.getProperty('uri.var.googlepubsub.accessToken');
-            var newAccessRegistryPath = mc.getProperty('uri.var.googlepubsub.accessTokenRegistryPath');
-            if(newAccessToken != null && newAccessToken != ''){
+            var newAccessToken = mc.getProperty('uri.var.pubSubAccessToken');
+            var newAccessRegistryPath = mc.getProperty('uri.var.pubSubAccessTokenRegistryPath');
+            if(newAccessToken){
                 var existingAccessToken = mc.getConfiguration().getRegistry().getResource(newAccessRegistryPath);
                     if(existingAccessToken == null){
                     // Create the registry entry if no such entry exists.
@@ -68,7 +68,7 @@
                 }
             ]]>
         </script>
-        <header name="Authorization" expression="fn:concat('Bearer ', $ctx:uri.var.googlepubsub.accessToken)"
+        <header name="Authorization" expression="fn:concat('Bearer ', $ctx:uri.var.pubSubAccessToken)"
                 scope="transport"/>
         <header name="Cache-Control" action="remove" scope="transport"/>
         <header name="Pragma" action="remove" scope="transport"/>

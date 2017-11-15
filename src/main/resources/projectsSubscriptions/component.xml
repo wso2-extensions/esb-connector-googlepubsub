@@ -16,15 +16,15 @@
   ~  specific language governing permissions and limitations
   ~  under the License.
 -->
-<component name="googlepubsub-projectsTopics" type="synapse/template">
+<component name="projectsSubscriptions" type="synapse/template">
     <subComponents>
-        <component name="createTopic">
-            <file>createTopic.xml</file>
-            <description>create a Topic.</description>
+        <component name="createTopicSubscription">
+            <file>createTopicSubscription.xml</file>
+            <description>Creates a subscription to a given topic</description>
         </component>
-        <component name="publishMessage">
-            <file>publishMessage.xml</file>
-            <description>Adds message to the topic</description>
+        <component name="pullMessage">
+            <file>pullMessage.xml</file>
+            <description>Pulls messages from the server</description>
         </component>
     </subComponents>
 </component>
