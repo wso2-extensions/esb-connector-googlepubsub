@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+  ~
+  ~   WSO2 Inc. licenses this file to you under the Apache License,
+  ~   Version 2.0 (the "License"); you may not use this file except
+  ~   in compliance with the License.
+  ~   You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing,
+  ~  software distributed under the License is distributed on an
+  ~  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~  KIND, either express or implied.  See the License for the
+  ~  specific language governing permissions and limitations
+  ~  under the License.
+-->
+<template name="publishMessage" xmlns="http://ws.apache.org/ns/synapse">
+    <parameter name="projectId" description="Unique identifier of the project"/>
+    <parameter name="topicName" description="Name of the Topic"/>
+    <parameter name="data" description="The message payload."/>
+    <parameter name="attributes" description="Optional attributes for this message."/>
+    <sequence>
+        <property name="uri.var.pubSubProjectId" expression="$func:projectId"/>
+        <property name="uri.var.pubSubTopicName" expression="$func:topicName"/>
+        <property name="pubSubData" expression="$func:data"/>
+        <property name="pubSubAttributes" expression="$func:attributes"/>
+        <payloadFactory media-type="json">
+            <format>
+                {
+                "messages":[{"data":"$1"}]
+                }
+            </format>
+            <args>
+                <arg expression="base64Encode($ctx:pubSubData)"/>
+            </args>
+        </payloadFactory>
+        <script language="js">
+            <![CDATA[
+                var attributes = mc.getProperty('pubSubAttributes');
+                var payload = mc.getPayloadJSON();
+                if (attributes != null && attributes != "") {
+                    payload.messages[0].attributes = eval( "(" + attributes + ")" );
+                }
+                mc.setPayloadJSON(payload);
+            ]]>
+        </script>
+        <property name="Accept-Encoding" scope="transport" action="remove"/>
+        <filter source="$ctx:pubSubBlocking" regex="true">
+            <then>
+                <call blocking="true">
+                    <endpoint>
+                        <http method="post"
+                              uri-template="{uri.var.pubSubApiUrl}/{uri.var.pubSubApiVersion}/projects/{uri.var.pubSubProjectId}/topics/{uri.var.pubSubTopicName}:publish"/>
+                    </endpoint>
+                </call>
+            </then>
+            <else>
+                <call>
+                    <endpoint>
+                        <http method="post"
+                              uri-template="{uri.var.pubSubApiUrl}/{uri.var.pubSubApiVersion}/projects/{uri.var.pubSubProjectId}/topics/{uri.var.pubSubTopicName}:publish"/>
+                    </endpoint>
+                </call>
+            </else>
+        </filter>
+    </sequence>
+</template>

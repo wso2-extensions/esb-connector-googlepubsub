@@ -1,0 +1,10 @@
+{
+  "apiUrl":"%s(apiUrl)",
+  "apiVersion":"%s(apiVersion)",
+  "accessToken": "%s(accessToken)",
+  "projectId":"%s(projectId)",
+  "topicName":"%s(topicName)",
+  "subscriptionName":"invalid",
+  "maxMessages":"%s(maxMessages)",
+  "returnImmediately":"%s(returnImmediately)"
+}

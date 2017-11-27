@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+~  Copyright (c) 2017, WSO2 Inc. (http://wso2.com) All Rights Reserved.
+~
+~  WSO2 Inc. licenses this file to you under the Apache License,
+~  Version 2.0 (the "License"); you may not use this file except
+~  in compliance with the License.
+~  You may obtain a copy of the License at
+~
+~   http://www.apache.org/licenses/LICENSE-2.0
+~
+~  Unless required by applicable law or agreed to in writing,
+~  software distributed under the License is distributed on an
+~  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~  KIND, either express or implied.  See the License for the
+~  specific language governing permissions and limitations
+~  under the License.
+-->
+<proxy xmlns="http://ws.apache.org/ns/synapse"
+       name="googlepubsub"
+       transports="https http"
+       startOnLoad="true"
+       trace="disable">
+    <description/>
+    <target>
+        <inSequence>
+            <property expression="json-eval($.accessToken)" name="accessToken"/>
+            <property expression="json-eval($.apiVersion)" name="apiVersion"/>
+            <property expression="json-eval($.apiUrl)" name="apiUrl"/>
+            <property expression="json-eval($.topicName)" name="topicName"/>
+            <property expression="json-eval($.projectId)" name="projectId"/>
+            <property name="subscriptionName" expression="json-eval($.subscriptionName)"/>
+            <property name="ackDeadlineSeconds" expression="json-eval($.ackDeadlineSeconds)"/>
+            <property name="pushEndpoint" expression="json-eval($.pushEndpoint)"/>
+            <property name="attributes" expression="json-eval($.attributes)"/>
+            <property name="data" expression="json-eval($.data)"/>
+            <property name="returnImmediately" expression="json-eval($.returnImmediately)"/>
+            <property name="maxMessages" expression="json-eval($.maxMessages)"/>
+            <googlepubsub.init>
+                <apiUrl>{$ctx:apiUrl}</apiUrl>
+                <apiVersion>{$ctx:apiVersion}</apiVersion>
+                <accessToken>{$ctx:accessToken}</accessToken>
+                <blocking>false</blocking>
+            </googlepubsub.init>
+            <switch source="get-property('transport', 'Action')">
+                <case regex="urn:createTopic">
+                    <googlepubsub.createTopic>
+                        <topicName>{$ctx:topicName}</topicName>
+                        <projectId>{$ctx:projectId}</projectId>
+                    </googlepubsub.createTopic>
+                </case>
+                <case regex="urn:createTopicSubscription">
+                    <googlepubsub.createTopicSubscription>
+                        <topicName>{$ctx:topicName}</topicName>
+                        <projectId>{$ctx:projectId}</projectId>
+                        <ackDeadlineSeconds>{$ctx:ackDeadlineSeconds}</ackDeadlineSeconds>
+                        <subscriptionName>{$ctx:subscriptionName}</subscriptionName>
+                        <pushEndpoint>{$ctx:pushEndpoint}</pushEndpoint>
+                        <attributes>{$ctx:attributes}</attributes>
+                    </googlepubsub.createTopicSubscription>
+                </case>
+                <case regex="urn:publishMessage">
+                    <googlepubsub.publishMessage>
+                        <topicName>{$ctx:topicName}</topicName>
+                        <projectId>{$ctx:projectId}</projectId>
+                        <data>{$ctx:data}</data>
+                        <attributes>{$ctx:attributes}</attributes>
+                    </googlepubsub.publishMessage>
+                </case>
+                <case regex="urn:pullMessage">
+                    <googlepubsub.pullMessage>
+                        <topicName>{$ctx:topicName}</topicName>
+                        <projectId>{$ctx:projectId}</projectId>
+                        <returnImmediately>{$ctx:returnImmediately}</returnImmediately>
+                        <subscriptionName>{$ctx:subscriptionName}</subscriptionName>
+                        <maxMessages>{$ctx:maxMessages}</maxMessages>
+                    </googlepubsub.pullMessage>
+                </case>
+            </switch>
+            <respond/>
+        </inSequence>
+        <outSequence>
+            <send/>
+        </outSequence>
+    </target>
+</proxy>

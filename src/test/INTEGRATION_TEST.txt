@@ -1,0 +1,58 @@
+Product: Integration tests for WSO2 EI Google Pub/Sub REST connector
+
+Pre-requisites:
+
+ - Maven 3.x
+ - Java 1.8
+
+Tested Platform:
+ - UBUNTU 16.04
+ - WSO2 EI 6.1.1
+
+Steps to follow in setting integration test.
+
+ 1. Download EI WSO2 EI 6.1.1 from official website.
+
+ 2. Create a Google Cloud Platform trail account and Creating the credentials for using the google pub/sub Connector:
+ 	i) 	    Using the URL "https://console.cloud.google.com/freetrial" to create Google Cloud Platform account.
+
+ 	ii)     Creating a Client ID and Client Secret
+
+ 	   i.   Navigate to the URL  https://console.developers.google.com/projectselector/apis/credentials
+ 	        and log in to your google account.
+ 	   ii.  If you do not already have a project, create a new project and
+ 	        navigate to Create Credential -> OAuth client ID.
+ 	   iii.  Select the Web Application option and create a client.
+ 	        Provide  https://developers.google.com/oauthplayground  as the redirect URL under Authorized redirect URIs
+ 	        and click on Create. The client ID and client secret will then be displayed.
+ 	   iv.  Click on the Library on the side menu, and select Google cloud Pub/Sub API. Click Enable.
+
+ 	iii) 	Obtaining the Access Token and Refresh Token
+
+ 	   i.   Navigate to the https://developers.google.com/oauthplayground URL and click on the gear wheel at the
+ 	        top right corner of the screen and select the option Use your own OAuth credentials.
+ 	        Provide the client ID and client secret you previously created and click on Close.
+ 	   ii.  Now under Step 1, select Google Cloud Pub/Sub API v1 from the list of APIs and check all the scopes listed
+ 	        down and click on Authorize APIs. You will then be prompted to allow permission, click on Allow.
+ 	   iii. In Step 2, click on Exchange authorization code for tokens to generate an display the access token and refresh token.
+
+ 3. Update the googlepubsub properties file at location
+    "{GOOGLEPUBSUB_CONNECTOR_HOME}/src/test/resources/artifacts/ESB/connector/config" as below.
+
+     i)     accessToken         -   Use the access token you got from step 2. iii) iii.
+     ii)    apiUrl              -   The API URL.
+     iii)   apiVersion=v1       -   The API version.
+     iv)    clientId            -   Use the clientId you got from step 2 ii) iii.
+     v)     clientSecret        -   Use the clientSecret you got from step 2 ii) iii.
+     vi)    refreshToken        -   Use the refresh token you got from step 2. iii) iii.
+     vii)   projectId           -   The project Id
+     viii)  topicName           -   Name of the Topic
+     ix)    subscriptionName,subscriptionName2  -   Name of the Subscription
+     xi)    ackDeadlineSeconds  -   Maximum time after a subscriber receives a message before subscriber should acknowledge the message
+     xii)   data                -   The Message payload you want to publish
+     xiii)  attributes          -   Optional attributes for the message
+     xiv)   maxMessages         -   The maximum number of messages returned for this request
+     xv)    returnImmediately   -   return the respond immediately or not
+
+ 4. Navigate to "{GOOGLEPUBSUB_CONNECTOR_HOME}" and run the following command.
+       $ mvn clean install
