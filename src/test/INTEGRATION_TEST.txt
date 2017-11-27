@@ -55,4 +55,4 @@ Steps to follow in setting integration test.
      xv)    returnImmediately   -   return the respond immediately or not
 
  4. Navigate to "{GOOGLEPUBSUB_CONNECTOR_HOME}" and run the following command.
-       $ mvn clean install
+       $ mvn clean install -Dskip-tests=false

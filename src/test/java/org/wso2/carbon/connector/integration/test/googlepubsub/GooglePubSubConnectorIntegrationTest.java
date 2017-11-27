@@ -70,7 +70,7 @@ public class GooglePubSubConnectorIntegrationTest extends ConnectorIntegrationTe
     }
 
     /**
-     * Positive test case for createTopic method with Negative parameters.
+     * Negative test case for createTopic method.
      */
     @Test(groups = { "wso2.ei" },
           dependsOnMethods = { "testCreateTopicWithMandatoryParameters" },
@@ -133,7 +133,7 @@ public class GooglePubSubConnectorIntegrationTest extends ConnectorIntegrationTe
     }
 
     /**
-     * Positive test case for createTopicSubscription method with Negative parameters.
+     * Negative test case for createTopicSubscription method.
      */
     @Test(groups = { "wso2.ei" },
           description = "googlePubSub {createTopicSubscription} integration test with Negative parameters.")
@@ -176,7 +176,7 @@ public class GooglePubSubConnectorIntegrationTest extends ConnectorIntegrationTe
     }
 
     /**
-     * Positive test case for publishMessage method with negative parameters.
+     * Negative test case for publishMessage.
      */
     @Test(groups = { "wso2.ei" },
           dependsOnMethods = { "testCreateTopicWithNegativeParameters" },
@@ -190,13 +190,13 @@ public class GooglePubSubConnectorIntegrationTest extends ConnectorIntegrationTe
     }
 
     /**
-     * Positive test case for publishMessage method with mandatory parameters.
+     * Positive test case for pullMessage method.
      */
     @Test(groups = { "wso2.ei" },
           dependsOnMethods = {
                   "testPublishMessageWithMandatoryParameters", "testCreateTopicSubscriptionWithMandatoryParameters"
           },
-          description = "googlePubSub {publishMessage} integration test with mandatory parameters.")
+          description = "googlePubSub {pullMessage} integration test with mandatory parameters.")
     public void testPullMessageWithMandatoryParameters() throws Exception {
         esbRequestHeadersMap.put("Action", "urn:pullMessage");
         RestResponse<JSONObject> esbRestResponse = sendJsonRestRequest(proxyUrl, "POST", esbRequestHeadersMap,
@@ -209,10 +209,10 @@ public class GooglePubSubConnectorIntegrationTest extends ConnectorIntegrationTe
     }
 
     /**
-     * Positive test case for publishMessage method with negative parameters.
+     * Negative test case for pullMessage method.
      */
     @Test(groups = { "wso2.ei" },
-          description = "googlePubSub {publishMessage} integration test with negative parameters.")
+          description = "googlePubSub {pullMessage} integration test with negative parameters.")
     public void testPullMessageWithNegativeParameters() throws Exception {
         esbRequestHeadersMap.put("Action", "urn:pullMessage");
         RestResponse<JSONObject> esbRestResponse = sendJsonRestRequest(proxyUrl, "POST", esbRequestHeadersMap,
