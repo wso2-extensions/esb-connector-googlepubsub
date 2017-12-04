@@ -1,22 +1,23 @@
-# Working with Projects Topics Operation
+# Working with Project Topics in Google Pub/Sub
 
 [[  Overview ]](#overview)  [[ Operation details ]](#operation-details)  [[  Sample configuration  ]](#sample-configuration)
 
 ### Overview 
 
-The following operations allow you to carry out project topic operations. Click an operation name to see details on how to use it. For a sample proxy service that illustrates how to carry out the operations, see [Sample configuration](#sample-configuration).
+The following operations allow you to work with project topics. Click an operation name to see details on how to use it.
+For a sample proxy service that illustrates how to work with project topics, see [Sample configuration](#sample-configuration).
 
 | Operation        | Description |
 | ------------- |-------------|
-| [createTopic](#create-topic)    | Creates a new topic |
-| [publishMessage](#publish-message)      | Adds message to a topic      |
+| [createTopic](#creating-a-topic)    | Creates a new topic. |
+| [publishMessage](#publishing-messages)      | Publishes messages to a specified topic. |
 
 ### Operation details
 
-This section provides details on each of the operations.
+This section provides more details on each of the operations.
 
-#### Create Topic
-This method allows you to creates a new topic.
+#### Creating a topic
+The createTopic operation creates a new topic with a name that you specify.
 
 **createTopic**
 ```xml
@@ -27,8 +28,8 @@ This method allows you to creates a new topic.
 ```
 
 **Properties**
-* topicName :- Unique name of the topic
-* projectId:- Unique value of the project (Id of the project that is created in the Google API).
+* topicName: The name of the topic that you are creating.
+* projectId: The unique ID of the project within which you want to create the topic.
 
 **Sample request**
 
@@ -39,18 +40,18 @@ Following is a sample request that can be handled by the createTopic operation.
   "apiUrl":"https://pubsub.googleapis.com",
   "apiVersion":"v1",
   "accessToken": "ya29.GlwG2NhgX_NQhxjtF_0G9bzf0FEj_shNWgF_GXmjeYQF0XQXrBjjcrJukforOeyTAHoFfSQW0x-OrrZ2lj47Z6k6DAYZuUv3ZhJMl-ll4mvouAbc",
-  "projectId":"rising-parser-123456",
-  "topicName":"topicA"
+  "topicName":"topicA",
+  "projectId":"rising-parser-123456"
 }
 ```
 
-**Related Google pub/sub documentation**
+**Related Google Pub/Sub documentation**
 
 [https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics/create](https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics/create)
 
-#### Publish Message
+#### Publishing messages
 
-This method allows you to Adds a message to the topic.
+The publishMessage operation publishes messages to a specified topic.
 
 **publishMessage**
 ```xml
@@ -63,10 +64,10 @@ This method allows you to Adds a message to the topic.
 ```
 
 **Properties**
-* topicName :- Unique name of the topic
-* projectId:- Unique value of the project (Id of the project that is created in the Google API).
-* data:- The message payload.
-* attributes[optional]:- Optional attributes for this message.
+* topicName: The unique name of the topic to which messages should be published.
+* projectId: The unique ID of the project within which the topic is created.
+* data: The message payload.
+* attributes[optional]: Additional attributes of the message.
 
 **Sample request**
 
@@ -77,19 +78,19 @@ Following is a sample request that can be handled by the publishMessage operatio
   "apiUrl":"https://pubsub.googleapis.com",
   "apiVersion":"v1",
   "accessToken": "ya29.GlwAJG2NhgX_NQhxjtF_0G9bzf0FEj_shNWgF_GXmYFjeYQF0XQXrBjjcrJukforOeyTAHoFfSQW0x-OrrZ2lj47Z6k6DAYZuUv3ZhJMl-ll4mvouAbc",
-  "projectId":"rising-parser-123456",
   "topicName":"topicA",
+  "projectId":"rising-parser-123456",
   "data":"hi",
   "attributes":{"key": "value1","key2":"values2"}
 }
 ```
-**Related Google pub/sub documentation**
+**Related Google Pub/Sub documentation**
 
 [https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics/publish](https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics/publish)
 
 #### Sample configuration
 
-Following is a sample proxy service that illustrates how to connect to Google pub/sub with the init operation and use the createTopic operation. The sample request for this proxy can be found in createTopic sample request. You can use this sample as a template for using other operations in this category.
+Following is a sample proxy service that illustrates how to connect to Google Pub/Sub with the init operation, and then use the createTopic operation. The sample request for this proxy can be found in the createTopic sample request. You can use this sample as a template for using other operations in this category.
 
 **Sample Proxy**
 ```xml
