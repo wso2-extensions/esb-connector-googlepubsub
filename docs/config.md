@@ -1,6 +1,6 @@
 # Configuring Google Pub/Sub Operations
 
-[[Configuring the connector]](#Configuring-the-connector)  [[Obtaining user credentials]](#Obtaining-user-credentials)
+[[Initializing the Connector]](#initializing-the-connector)  [[Obtaining user credentials]](#obtaining-user-credentials)
 
 > NOTE: To work with the Google Pub/Sub connector, you need to have a Google Cloud Platform account. If you do not have a Google Cloud Platform account, go to [https://console.cloud.google.com/freetrial](https://console.cloud.google.com/freetrial) and create a Google Cloud Platform trial account.
 
@@ -29,7 +29,7 @@ Google Pub/Sub uses the OAuth 2.0 protocol for authentication and authorization.
     5. Click **ALLOW**.
     6. In Step 2 on the screen, click **Exchange authorization code for tokens** to generate and view the access token and refresh token. 
 
-## Configuring the connector
+## Initializing the Connector
 Specify the init method as follows:
 
 **init**
