@@ -1,42 +1,43 @@
-# Working with Projects Subscription Operation
+# Working with Project Subscriptions in Google Pub/Sub
 
 [[  Overview ]](#overview)  [[ Operation details ]](#operation-details)  [[  Sample configuration  ]](#sample-configuration)
 
 ### Overview 
 
-The following operations allow you to carry out project subscription operations. Click an operation name to see details on how to use it. For a sample proxy service that illustrates how to carry out the operations, see [Sample configuration](#sample-configuration).
+The following operations allow you to work with project subscriptions. Click an operation name to see details on how to use it.
+For a sample proxy service that illustrates how to work with project subscriptions, see [Sample configuration](#sample-configuration).
 
 | Operation        | Description |
 | ------------- |-------------|
-| [createTopicSubscription](#create-topic-subscription)    | Creates a subscription to a given topic |
-| [pullMessage](#pull-message)      | Pulls messages from the server     |
+| [createTopicSubscription](#creating-a-subscription-to-a-topic)    | Creates a subscription to a specified topic |
+| [pullMessage](#retrieving-messages-published-to-a-topic)      | Retrieves messages published to a topic     |
 
 ### Operation details
 
-This section provides details on each of the operations.
+This section provides more details on each of the operations.
 
-#### Create Topic Subscription
-This method allows you to creates a subscription to a given topic.
+#### Creating a subscription to a topic
+The createTopicSubscription operation creates a subscription to a topic that you specify.
 
 **createTopicSubscription**
 ```xml
 <googlepubsub.createTopicSubscription>
     <topicName>{$ctx:topicName}</topicName>
     <projectId>{$ctx:projectId}</projectId>
-    <ackDeadlineSeconds>{$ctx:ackDeadlineSeconds}</ackDeadlineSeconds>
     <subscriptionName>{$ctx:subscriptionName}</subscriptionName>
+    <ackDeadlineSeconds>{$ctx:ackDeadlineSeconds}</ackDeadlineSeconds>
     <pushEndpoint>{$ctx:pushEndpoint}</pushEndpoint>
     <attributes>{$ctx:attributes}</attributes>
 </googlepubsub.createTopicSubscription>
 ```
 
 **Properties**
-* topicName :- Unique name of the topic.
-* projectId:- Unique value of the project (Id of the project that is created in the Google API).
-* subscriptionName:- Name of the subscription.
-* ackDeadlineSeconds[Optional]:- This value is the maximum time after a subscriber receives a message before the subscriber should acknowledge the message.
-* pushendpoint[Optional]:- A URL locating the endpoint to which messages should be pushed.
-* attributes[Optional]:- Endpoint configuration attributes.
+* topicName: The name of the topic for which you want to create a subscription.
+* projectId: The unique ID of the project within which the topic is created.
+* subscriptionName: The name of the subscription.
+* ackDeadlineSeconds[Optional]: The maximum time a subscriber can take to acknowledge a message that is received.
+* pushEndpoint[Optional]: The URL that specifies the endpoint to which messages should be pushed.
+* attributes[Optional]: Additional endpoint configuration attributes.
 
 **Sample request**
 
@@ -51,18 +52,18 @@ Following is a sample request that can be handled by the createTopicSubscription
   "topicName":"topicA",
   "subscriptionName":"mysubA",
   "ackDeadlineSeconds":"30",
-  "attributes": {"key": "value1","key2":"values2"},
-  "pushEndpoint": "https://example.com/push"
+  "pushEndpoint": "https://example.com/push",
+  "attributes": {"key": "value1","key2":"values2"}
 }
 ```
 
-**Related Google pub/sub documentation**
+**Related Google Pub/Sub documentation**
 
 [https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/create](https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/create)
 
-#### Pull Message
+#### Retrieving messages published to a topic
 
-This method allows you to Pulls messages from the server.
+The pullMessage operation retrieves messages that are published to a topic. 
 
 **pullMessage**
 ```xml
@@ -76,11 +77,11 @@ This method allows you to Pulls messages from the server.
 ```
 
 **Properties**
-* topicName :- Unique name of the topic
-* projectId:- Unique value of the project (Id of the project that is created in the Google API).
-* subscriptionName:- Name of the subscription.
-* attributes[optional]:- Optional attributes for this message.
-* returnImmediately[Optional]:- If this field set to true, the system will respond immediately.
+* topicName: The name of the topic to which the subscription belongs.
+* projectId: The unique ID of the project within which the topic is created.
+* subscriptionName: The name of the subscription from which messages should be retrieved.
+* maxMessages[optional]: The maximum number of messages to retrieve.
+* returnImmediately[Optional]: Set this to true if you want the server to respond immediately.
 
 **Sample request**
 
@@ -91,20 +92,20 @@ Following is a sample request that can be handled by the pullMessage operation.
   "apiUrl":"https://pubsub.googleapis.com",
   "apiVersion":"v1",
   "accessToken": "ya29.GlwABbJG2NhgX_NQhxjtF_0G9bzf0FEj_shNWgF_GXmYFpwIxjeYQF0XjcrJukforOeyTAHoFfSQW0x-OrrZ2lj47Z6k6DAYZuUv3ZhJMl-ll4mvouAbc",
-  "projectId":"rising-parser-123456",
   "topicName":"topicA",
+  "projectId":"rising-parser-123456",
   "subscriptionName":"mysubA",
   "maxMessages":"2",
   "returnImmediately":"false"
 }
 ```
-**Related Google pub/sub documentation**
+**Related Google Pub/Sub documentation**
 
 [https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/pull](https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.subscriptions/pull)
 
 #### Sample configuration
 
-Following is a sample proxy service that illustrates how to connect to Google pub/sub with the init operation and use the createTopicSubscription operation. The sample request for this proxy can be found in createTopicSubscription sample request. You can use this sample as a template for using other operations in this category.
+Following is a sample proxy service that illustrates how to connect to Google Pub/Sub with the init operation, and then use the createTopicSubscription operation. The sample request for this proxy can be found in the createTopicSubscription sample request. You can use this sample as a template for using other operations in this category.
 
 **Sample Proxy**
 ```xml
