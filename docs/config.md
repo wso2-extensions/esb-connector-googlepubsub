@@ -42,6 +42,7 @@ Specify the init method as follows:
     <clientSecret>{$ctx:clientSecret}</clientSecret>
     <refreshToken>{$ctx:refreshToken}</refreshToken>
     <blocking>{$ctx:blocking}</blocking>
+    <tokenEndpoint>{$ctx:tokenEndpoint}</tokenEndpoint>
 </googlepubsub.init>
 ```
 **Properties** 
@@ -52,6 +53,7 @@ Specify the init method as follows:
 * clientSecret: The client secret provided by the Google developer console.
 * refreshToken: The refresh token provided by the Google developer console, which can be used to obtain new access tokens.
 * blocking: Set this to true if you want the connector to perform blocking invocations to Google Pub/Sub.
+* tokenEndpoint: The token endpoint of the Google API. The default will be set to https://www.googleapis.com/oauth2/v4/token if not provided.
 
 Now that you have connected to Google Pub/Sub, use the information in the following topics to perform various operations with the connector:
 
