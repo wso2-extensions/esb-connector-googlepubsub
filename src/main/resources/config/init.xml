@@ -28,6 +28,8 @@
     <parameter name="blocking" description="Set to true to perform the blocking invocations to Google Spreadsheet."/>
     <parameter name="accessTokenRegistryPath"
                description="Registry Path of the Connector where the values are stored."/>
+    <parameter name="tokenEndpoint" description="The token endpoint of the Google API"/>
+
     <sequence>
         <property name="uri.var.pubSubApiUrl" expression="$func:apiUrl"/>
         <property name="uri.var.pubSubApiVersion" expression="$func:apiVersion"/>
@@ -38,6 +40,12 @@
         <property name="pubSubBlocking" expression="$func:blocking"/>
         <property name="uri.var.pubSubAccessTokenRegistryPath"
                   expression="$func:accessTokenRegistryPath"/>
+        <property name="uri.var.pubSubTokenEndpoint" expression="$func:tokenEndpoint"/>
+        <filter source="boolean($ctx:uri.var.pubSubTokenEndpoint)" regex="false">
+            <then>
+                <property name="uri.var.pubSubTokenEndpoint" value="https://www.googleapis.com/oauth2/v4/token"/>
+            </then>
+        </filter>
         <filter source="boolean($ctx:pubSubRefreshToken) and boolean($ctx:pubSubClientSecret)
                 and boolean($ctx:pubSubClientId) and boolean($ctx:uri.var.pubSubAccessToken)"
                 regex="true">

@@ -22,10 +22,17 @@
     <parameter name="clientSecret"
                description="clientSecret of your App, given by google console when you registered your application"/>
     <parameter name="refreshToken" description="Refresh token to exchange with an access token."/>
+    <parameter name="tokenEndpoint" description="The token endpoint of the Google API"/>
     <sequence>
         <property name="pubSubRefreshToken" expression="$func:refreshToken"/>
         <property name="pubSubClientId" expression="$func:clientId"/>
         <property name="pubSubClientSecret" expression="$func:clientSecret"/>
+        <property name="uri.var.pubSubTokenEndpoint" expression="$func:tokenEndpoint"/>
+        <filter source="boolean($ctx:uri.var.pubSubTokenEndpoint)" regex="false">
+            <then>
+                <property name="uri.var.pubSubTokenEndpoint" value="https://www.googleapis.com/oauth2/v4/token"/>
+            </then>
+        </filter>
         <payloadFactory media-type="json">
             <format>
                 {
@@ -45,7 +52,7 @@
         <call>
             <endpoint>
                 <http method="post"
-                      uri-template="https://www.googleapis.com/oauth2/v3/token"/>
+                      uri-template="{uri.var.pubSubTokenEndpoint}"/>
             </endpoint>
         </call>
         <!-- Setting the new access token to the property. -->
