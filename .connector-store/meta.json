@@ -4,7 +4,7 @@
     "category": "Other",
     "documentationUrl": "https://github.com/wso2-extensions/esb-connector-googlepubsub/tree/release-1.0.1/docs",
     "description": "The Google Pub/Sub connector allows you to access the Google Cloud Pub/Sub API Version v1 through WSO2 ESB. Google Cloud Pub/Sub is a fully-managed real-time messaging service that allows you to send and receive messages between independent applications.",
-    "status": "Active",
+    "status": "Inactive",
     "labels": [
         "google",
         "pubsub"
