@@ -12,9 +12,7 @@
     "releases": [
         {
             "tagName": "org.wso2.carbon.connector.googlepubsub-1.0.1",
-            "products": [
-                "EI 6.1.1"
-            ],
+            "products": [],
             "isHidden": false
         }
     ]
