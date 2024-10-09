@@ -7,7 +7,7 @@
     "status": "Active",
     "labels": [
         "google",
-        "pubsub"
+        "integration"
     ],
     "releases": [
         {
