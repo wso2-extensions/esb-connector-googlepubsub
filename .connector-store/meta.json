@@ -8,7 +8,7 @@
     "mavenArtifactId": "org.wso2.carbon.connector.googlepubsub",
     "description": "The Google Pub/Sub connector allows you to access the Google Cloud Pub/Sub API Version v1 through WSO2 MI. Google Cloud Pub/Sub is a fully-managed real-time messaging service that allows you to send and receive messages between independent applications.",
     "status": "Active",
-    "connectorRank": 101,
+    "rank": 101,
     "type": "Connector",
     "labels": [
         "google",
@@ -55,7 +55,12 @@
                     "isHidden": false
                 }
             ],
-            "connections": [],
+            "connections": [
+                {
+                    "name": "googlepubsub",
+                    "description": "Connection for publishing and subscribing to Google Pub/Sub."
+                }
+            ],
             "isHidden": false
         }
     ]
