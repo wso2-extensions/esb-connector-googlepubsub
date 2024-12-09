@@ -1,10 +1,15 @@
 {
     "name": "Google Pub/Sub",
     "owner": "WSO2",
+    "product": "MI",
     "category": "Developer Tools",
     "documentationUrl": "https://mi.docs.wso2.com/en/latest/reference/connectors/google-pubsub-connector/googlepubsub-connector-overview/",
+    "mavenGroupId": "org.wso2.integration.connector",
+    "mavenArtifactId": "mi-connector-googlepubsub",
     "description": "The Google Pub/Sub connector allows you to access the Google Cloud Pub/Sub API Version v1 through WSO2 MI. Google Cloud Pub/Sub is a fully-managed real-time messaging service that allows you to send and receive messages between independent applications.",
     "status": "Active",
+    "rank": 101,
+    "type": "Connector",
     "labels": [
         "google",
         "integration"
@@ -17,6 +22,44 @@
                 "MI 4.2.0",
                 "MI 4.1.0",
                 "MI 4.0.0"
+            ],
+            "operations": [
+                {
+                    "name": "init",
+                    "description": "configure google pub/sub connector",
+                    "isHidden": false
+                },
+                {
+                    "name": "getAccessTokenFromRefreshToken",
+                    "description": "Get the access token from refresh token",
+                    "isHidden": false
+                },
+                {
+                    "name": "createTopicSubscription",
+                    "description": "Creates a subscription to a given topic",
+                    "isHidden": false
+                },
+                {
+                    "name": "pullMessage",
+                    "description": "Pulls messages from the server",
+                    "isHidden": false
+                },
+                {
+                    "name": "createTopic",
+                    "description": "create a Topic.",
+                    "isHidden": false
+                },
+                {
+                    "name": "publishMessage",
+                    "description": "Adds message to the topic",
+                    "isHidden": false
+                }
+            ],
+            "connections": [
+                {
+                    "name": "googlepubsub",
+                    "description": "Connection for publishing and subscribing to Google Pub/Sub."
+                }
             ],
             "isHidden": false
         }
