@@ -16,6 +16,54 @@
     ],
     "releases": [
         {
+            "tagName": "v1.0.2",
+            "products": [
+                "MI 4.3.0",
+                "MI 4.2.0",
+                "MI 4.1.0",
+                "MI 4.0.0"
+            ],
+            "operations": [
+                {
+                    "name": "init",
+                    "description": "configure google pub/sub connector",
+                    "isHidden": false
+                },
+                {
+                    "name": "getAccessTokenFromRefreshToken",
+                    "description": "Get the access token from refresh token",
+                    "isHidden": false
+                },
+                {
+                    "name": "createTopicSubscription",
+                    "description": "Creates a subscription to a given topic",
+                    "isHidden": false
+                },
+                {
+                    "name": "pullMessage",
+                    "description": "Pulls messages from the server",
+                    "isHidden": false
+                },
+                {
+                    "name": "createTopic",
+                    "description": "create a Topic.",
+                    "isHidden": false
+                },
+                {
+                    "name": "publishMessage",
+                    "description": "Adds message to the topic",
+                    "isHidden": false
+                }
+            ],
+            "connections": [
+                {
+                    "name": "googlepubsub",
+                    "description": "Connection for publishing and subscribing to Google Pub/Sub."
+                }
+            ],
+            "isHidden": false
+        },
+        {
             "tagName": "org.wso2.carbon.connector.googlepubsub-1.0.1",
             "products": [
                 "MI 4.3.0",
