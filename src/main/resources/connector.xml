@@ -23,4 +23,5 @@
         <dependency component="projectsTopics"/>
         <description>google Pub/Sub v1 connector</description>
     </component>
+    <displayName>Google Pub/Sub</displayName>
 </connector>
