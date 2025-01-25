@@ -55,12 +55,7 @@
                     "isHidden": false
                 }
             ],
-            "connections": [
-                {
-                    "name": "googlepubsub",
-                    "description": "Connection for publishing and subscribing to Google Pub/Sub."
-                }
-            ],
+            "connections": [],
             "isHidden": false
         },
         {
@@ -103,12 +98,7 @@
                     "isHidden": false
                 }
             ],
-            "connections": [
-                {
-                    "name": "googlepubsub",
-                    "description": "Connection for publishing and subscribing to Google Pub/Sub."
-                }
-            ],
+            "connections": [],
             "isHidden": false
         }
     ]
